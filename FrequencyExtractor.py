@@ -49,12 +49,7 @@ def extract_frequencies(file_name, bar_count, beat_count_per_bar):
                                                     win_length=WIN_LENGTH,
                                                     hop_length=HOP_LENGTH)),
                                    ref=np.max)
-    librosa.display.specshow(stft,
-                             sr=sampling_rate,
-                             hop_length=HOP_LENGTH,
-                             y_axis='linear',
-                             x_axis='time')
-    plt.colorbar(format='%2.0f dB')
+
     frequencies = []
 
     for x in range(0, stft.shape[1]):
@@ -63,13 +58,22 @@ def extract_frequencies(file_name, bar_count, beat_count_per_bar):
     unified_frequencies, result_frequencies = unify_frequencies(frequencies, bar_count, beat_count_per_bar)
 
     plt.plot(np.linspace(start=0,
-                         stop=librosa.get_duration(amplitudes, sampling_rate),
+                         stop=librosa.get_duration(y=amplitudes, sr=sampling_rate),
                          num=len(frequencies)),
              frequencies, 'g')
+
     plt.plot(np.linspace(start=0,
-                         stop=librosa.get_duration(amplitudes, sampling_rate),
+                         stop=librosa.get_duration(y=amplitudes, sr=sampling_rate),
                          num=len(unified_frequencies)),
              unified_frequencies, 'b')
+
+    librosa.display.specshow(stft,
+                             sr=sampling_rate,
+                             win_length=WIN_LENGTH,
+                             hop_length=HOP_LENGTH,
+                             y_axis='linear',
+                             x_axis='time')
+    plt.colorbar(format='%2.0f dB')
 
     plt.ylim(0, 2000)
     plt.savefig(file_name + ".png", dpi=500)
